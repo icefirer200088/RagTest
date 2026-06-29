@@ -25,6 +25,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.embedder import Embedder as ApiEmbedder
 from src.embedder_local import LocalEmbedder
+from src.embedder_onnx import ONNXEmbedder
 from src.chunk import chunk_by_sentence, chunk_by_size, chunk_by_paragraph
 from src.vector_store import VectorStore
 
@@ -97,8 +98,8 @@ def main():
                         help="分块策略")
     parser.add_argument("--text", type=str, help="直接传文本（不走文件）")
     parser.add_argument("--mode", type=str, default="local",
-                        choices=["local", "api"],
-                        help="embedding 模式: local（零依赖，推荐）/ api（需 DEEPSEEK_API_KEY）")
+                        choices=["local", "api", "onnx"],
+                        help="embedding 模式: local（零依赖）/ api（需 DEEPSEEK_API_KEY）/ onnx（真实模型，需先下载）")
     parser.add_argument("--top-k", type=int, default=5, help="返回几条结果")
     parser.add_argument("--dim", type=int, default=256, help="向量维度（local 模式有效）")
     args = parser.parse_args()
@@ -118,7 +119,15 @@ def main():
         sys.exit(1)
 
     # 选择 embedder
-    if args.mode == "api":
+    if args.mode == "onnx":
+        try:
+            embedder = ONNXEmbedder()
+        except FileNotFoundError as e:
+            print(f"❌ {e}")
+            print(f"💡 先运行: python scripts/download_embedding_model.py")
+            sys.exit(1)
+        embedder_cls = embedder.name
+    elif args.mode == "api":
         try:
             embedder = ApiEmbedder()
         except ValueError as e:

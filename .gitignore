@@ -7,3 +7,10 @@ dist/
 build/
 .venv/
 venv/
+
+# HF 模型缓存
+models/models--*/
+models/blobs/
+models/refs/
+models/.no_exist/
+models/CACHEDIR.TAG

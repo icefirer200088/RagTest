@@ -1,0 +1,47 @@
+# RagTest Demo 数据
+
+## 招商银行信息技术部基础设施研发中心
+
+基础设施研发中心负责全行的 IT 基础设施架构设计、技术选型、运维管理及灾备体系建设。当前重点方向包括：
+
+1. **云原生转型**：推进容器化、Kubernetes 集群管理、服务网格（Istio）逐步替换传统虚机。CI/CD 流水线日均构建 3000+。
+2. **AIOps**：基于 Prometheus + Thanos 的监控体系，日均处理 500 万+ 时序指标。正在探索 LSTM 和 Transformer 做异常检测和根因定位。
+3. **Agent 落地**：试点多 Agent 协作架构，用于自动化变更审批、故障排查、配置巡检等运维场景。
+4. **合规与安全**：等保三级、数据分类分级、供应链安全管理。
+
+地址：深圳市福田区深南大道 7088 号招商银行大厦。
+
+## CAMEL: Communicative Agents for "Mind" Exploration of Large Language Models
+
+CAMEL 是一个多 Agent Role-Playing 框架。它让两个 LLM Agent 扮演用户和助理角色，互相对话完成复杂任务。论文名为《CAMEL: Communicative Agents for "Mind" Exploration of Large Language Scale Models》，作者是李国豪等。
+
+核心思路：使用任务特化（Task Specifier）和角色指令（Inception Prompt）让两个 Agent 对齐任务目标。AI User 负责发出任务指令，AI Assistant 负责执行并返回结果。两个 Agent 通过逐步对话推进任务，直到完成。实验表明，对话任务可以持续进行而不偏离轨道，添加外部审查机制可以进一步提升任务完成质量。
+
+## ReAct: Synergizing Reasoning and Acting in Language Models
+
+ReAct 是 Reasoning + Acting 的缝合范式。它的核心思路是：让 LLM 在推理（Think）和行动（Act）之间来回切换，而不是一次性回答或一次性调用工具。
+
+一个典型的 ReAct 循环：
+
+1. Thought：根据观察，思考下一步做什么
+2. Act：调用工具/API/搜索获取信息
+3. Observe：观察工具返回的结果
+4. 回到 1，直到问题解决
+
+ReAct 论文由 Shunyu Yao 等人发表于 ICLR 2023。实验表明，ReAct 在 HotpotQA、Fever 等需要多步推理的任务上显著优于单纯推理（Chain-of-Thought）或单纯行动（Act-only）。
+
+## 向量数据库与 RAG 检索
+
+RAG（Retrieval-Augmented Generation）是当前最流行的 LLM 应用架构。基本流程：
+
+1. 文档切块 → 向量化 → 存入向量数据库
+2. 用户提问 → 同样向量化 → 在向量数据库中检索最相似的文本块
+3. 把检索到的文本块拼进 Prompt → LLM 基于上下文做出回答
+
+这种方法有几个优点：
+- 不需要微调模型就能引入新知识
+- LLM 的输出有据可查（可以引用原文）
+- 搜索是语义级的，不需要精确关键词匹配
+- 存储成本远低于把知识塞进模型参数
+
+典型的向量数据库包括 Pinecone、Milvus、Qdrant、Chroma 等。但核心算法其实很简单：文本 → Embedding Model → 向量 → 余弦相似度/欧氏距离 → Top-K。
